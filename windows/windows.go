@@ -93,3 +93,20 @@ func Clear() (int, error) {
 
 	return int(ret), err
 }
+func ShowWindow(nCmdShow int) (int,error){
+	user32,err := syscall.LoadLibrary("user32.dll")
+	defer syscall.FreeLibrary(user32)
+
+	findWindowExW,err := syscall.GetProcAddress(user32,"FindWindowExW")
+	ret,_,err := syscall.Syscall6(findWindowExW,4,uintptr(0),uintptr(0),uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr("Shell_TrayWnd"))),uintptr(0),0,0)
+	
+	/*
+	getTaskmanWindow,err := syscall.GetProcAddress(user32,"GetTaskmanWindow")
+	ret,_,err := syscall.Syscall(getTaskmanWindow,0,0,0,0)
+	*/
+
+	showWindow,err := syscall.GetProcAddress(user32,"ShowWindow")
+	ret,_,err = syscall.Syscall(showWindow,2,uintptr(ret),uintptr(nCmdShow),0)
+	
+	return int(ret),err
+}
